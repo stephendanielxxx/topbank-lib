@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
+import java.util.Date;
 
 public class JwtUtil {
 
@@ -12,12 +13,33 @@ public class JwtUtil {
         try {
             SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET));
             Claims body = Jwts.parserBuilder().setSigningKey(secret).build().parseClaimsJws(token).getBody();
-//            Claims body = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
             return body;
         } catch (Exception e) {
             System.out.println(e.getMessage() + " => " + e);
         }
         return null;
+    }
+
+    public String generateToken(String id) {
+        Claims claims = Jwts.claims().setSubject(id);
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + SecretUtils.tokenValidity;
+        Date exp = new Date(expMillis);
+        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET));
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(nowMillis)).setExpiration(exp)
+                .signWith(secret, SignatureAlgorithm.HS512).compact();
+    }
+
+    public String generateRefreshToken(String id) {
+        Claims claims = Jwts.claims().setSubject(id);
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + SecretUtils.refreshTokenValidity;
+        Date exp = new Date(expMillis);
+        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET_REFRESH));
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(nowMillis)).setExpiration(exp)
+                .signWith(secret, SignatureAlgorithm.HS512).compact();
     }
 
     public void validateToken(final String token) throws JwtTokenMalformedException, JwtTokenMissingException {
