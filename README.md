@@ -2,20 +2,20 @@
 
 How to use library in project :
 - Add maven repository in project pom.xml
-```
+```xml
   <repositories>
-  <repository>
+    <repository>
       <id>jitpack.io</id>
       <url>https://jitpack.io</url>
-  </repository>
+    </repository>
   </repositories>
   ```
 - Add the dependency
-```
+```xml
   <dependency>
-  <groupId>com.github.stephendanielxxx</groupId>
-  <artifactId>topbank-lib</artifactId>
-  <version>1.0.3</version>
+    <groupId>com.github.stephendanielxxx</groupId>
+    <artifactId>topbank-lib</artifactId>
+    <version>1.0.3</version>
   </dependency>
 ```
 How to update library
