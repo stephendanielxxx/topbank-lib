@@ -31,10 +31,32 @@ public class JwtUtil {
                 .signWith(secret, SignatureAlgorithm.HS512).compact();
     }
 
+    public String generateToken(String id, long validity) {
+        Claims claims = Jwts.claims().setSubject(id);
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + validity;
+        Date exp = new Date(expMillis);
+        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET));
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(nowMillis)).setExpiration(exp)
+                .signWith(secret, SignatureAlgorithm.HS512).compact();
+    }
+
     public String generateRefreshToken(String id) {
         Claims claims = Jwts.claims().setSubject(id);
         long nowMillis = System.currentTimeMillis();
         long expMillis = nowMillis + SecretUtils.refreshTokenValidity;
+        Date exp = new Date(expMillis);
+        SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET_REFRESH));
+
+        return Jwts.builder().setClaims(claims).setIssuedAt(new Date(nowMillis)).setExpiration(exp)
+                .signWith(secret, SignatureAlgorithm.HS512).compact();
+    }
+
+    public String generateRefreshToken(String id, long validity) {
+        Claims claims = Jwts.claims().setSubject(id);
+        long nowMillis = System.currentTimeMillis();
+        long expMillis = nowMillis + validity;
         Date exp = new Date(expMillis);
         SecretKey secret = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SecretUtils.JWT_SECRET_REFRESH));
 
